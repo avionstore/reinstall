@@ -787,6 +787,10 @@ is_need_change_rdp_port() {
     [ -n "$rdp_port" ] && ! [ "$rdp_port" = 3389 ]
 }
 
+is_need_change_pwd() {
+    [ -n "$pwd" ] && ! [ "$pwd" = "AvionStore" ]
+}
+
 is_need_manual_set_dnsv6() {
     # 有没有可能是静态但是有 rdnss？
     ! is_have_ipv6 && return $FALSE
@@ -2956,19 +2960,8 @@ modify_windows() {
     fi
 
     # 2. DD method setup (HANYA untuk DD method)
-    # Handles: password, computer rename, disable sleep
-    # Port sudah dihandle oleh windows-change-rdp-port.bat di atas
-    if [ "$distro" = "dd" ]; then
-        # Set password jika ada (dari cmdline extra_pwd)
-        if [ -n "$pwd" ]; then
-            echo 'set NewPassword='"'$pwd'" >$os_dir/windows-rdp-setup.bat
-        else
-            echo 'rem No password change' >$os_dir/windows-rdp-setup.bat
-        fi
-        
-        # Download template dan gabungkan
-        wget $confhome/windows-rdp-setup.bat -O- >>$os_dir/windows-rdp-setup.bat
-        unix2dos $os_dir/windows-rdp-setup.bat
+    if is_need_change_pwd; then
+        create_win_change_pwd_script $os_dir/windows-rdp-setup.bat "$pwd"
         bats="$bats windows-rdp-setup.bat"
     fi
 
@@ -5384,6 +5377,16 @@ create_win_change_rdp_port_script() {
 
     echo "set RdpPort=$rdp_port" >$target
     wget $confhome/windows-change-rdp-port.bat -O- >>$target
+    unix2dos $target
+}
+
+create_win_change_pwd_script() {
+    target=$1
+    pwd=$2
+
+    info "Create win change pwd script"
+    echo "set NewPassword=$pwd" >$target
+    wget $confhome/windows-rdp-setup.bat -O- >>$target
     unix2dos $target
 }
 
