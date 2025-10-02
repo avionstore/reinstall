@@ -1,4 +1,5 @@
 @echo off
+title Windows Setup
 mode con cp select=437 >nul
 
 rem ================== WINDOWS SETUP ==================
@@ -113,26 +114,6 @@ if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" (
 :skip_chrome
 echo.
 
-rem ================== RESTART RDP SERVICE ==================
-rem Restart Terminal Service to apply any RDP-related changes
-echo.
-echo [i] Restarting Remote Desktop service...
-
-sc query TermService >nul 2>&1
-if %errorlevel%==1060 goto :do_reboot
-
-set retryCount=5
-:restartRDP
-if %retryCount% LEQ 0 goto :do_reboot
-net stop TermService /y && net start TermService || (
-    set /a retryCount-=1
-    timeout 10 >nul
-    goto :restartRDP
-)
-
-:do_reboot
-echo.
-
 rem ================== PASSWORD CHANGE ==================
 rem Change Administrator password if provided
 if defined NewPassword (
@@ -158,8 +139,28 @@ if defined NewPassword (
 )
 echo.
 
+rem ================== RESTART RDP SERVICE ==================
+rem Restart Terminal Service to apply any RDP-related changes
+echo.
+echo [i] Restarting Remote Desktop service...
+
+sc query TermService >nul 2>&1
+if %errorlevel%==1060 goto :do_reboot
+
+set retryCount=5
+:restartRDP
+if %retryCount% LEQ 0 goto :do_reboot
+net stop TermService /y && net start TermService || (
+    set /a retryCount-=1
+    timeout 10 >nul
+    goto :restartRDP
+)
+
+:do_reboot
+echo.
+
 echo ================== SETUP COMPLETE ==================
-echo [i] DD method setup script execution finished
+echo [i] Windows setup script execution finished
 echo Computer Name: %NEWNAME%
 if "%PASSWORD_CHANGED%"=="1" (
     echo Password: Changed
@@ -168,6 +169,6 @@ if "%PASSWORD_CHANGED%"=="1" (
 )
 echo.
 echo [i] Scheduling reboot to apply changes...
-shutdown /r /t 0 /c "Successfully Setup Windows"
+shutdown /r /t 5 /c "Successfully Setup Windows"
 del "%~f0"
 
