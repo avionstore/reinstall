@@ -17,6 +17,40 @@ powercfg -change -standby-timeout-dc 0
 echo Sleep settings have been disabled.
 echo.
 
+rem ================== EXTEND DISK ==================
+echo [i] Checking and extending Disk C...
+timeout /t 1 /nobreak >nul
+
+rem Use PowerShell to extend partition C: to maximum available size
+powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $partition = Get-Partition -DriveLetter C -ErrorAction Stop; $disk = Get-Disk -Number $partition.DiskNumber -ErrorAction Stop; $maxSize = ($partition | Get-PartitionSupportedSize).SizeMax; $currentSize = $partition.Size; if ($maxSize -gt $currentSize) { Resize-Partition -DriveLetter C -Size $maxSize -ErrorAction Stop; Write-Host '[i] Disk C extended successfully'; exit 0 } else { Write-Host '[i] No unallocated space available - skipping'; exit 2 } } catch { Write-Host '[!] Error extending disk:' $_.Exception.Message; exit 1 }"
+
+if errorlevel 2 (
+    echo.
+) else if errorlevel 1 (
+    echo [!] Failed to extend disk - trying diskpart method...
+    
+    rem Fallback to diskpart method
+    echo list disk > "%TEMP%\disk_info.txt"
+    diskpart /s "%TEMP%\disk_info.txt" > "%TEMP%\disk_output.txt" 2>&1
+    
+    echo select volume C > "%TEMP%\disk_extend.txt"
+    echo extend >> "%TEMP%\disk_extend.txt"
+    
+    diskpart /s "%TEMP%\disk_extend.txt" >nul 2>&1
+    if errorlevel 1 (
+        echo [!] Diskpart method also failed
+    ) else (
+        echo [i] Disk C extended using diskpart
+    )
+    
+    del "%TEMP%\disk_info.txt" /f /q >nul 2>&1
+    del "%TEMP%\disk_output.txt" /f /q >nul 2>&1
+    del "%TEMP%\disk_extend.txt" /f /q >nul 2>&1
+    echo.
+) else (
+    echo.
+)
+
 rem ================== LICENSE RESET ==================
 echo [i] Resetting Windows License...
 timeout /t 1 /nobreak >nul
