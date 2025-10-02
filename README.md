@@ -10,14 +10,14 @@
 
 ## 介绍
 
-- 一键重装到 Linux，支持 19 种常见发行版
-- 一键重装到 Windows，使用官方原版 ISO 而非自制镜像，脚本支持自动查找 ISO 链接、自动安装 `VirtIO` 等公有云驱动
-- 支持任意方向重装，即 `Linux to Linux`、`Linux to Windows`、`Windows to Windows`、`Windows to Linux`
-- 自动设置 IP，智能设置动静态，支持 `/32`、`/128`、`网关不在子网范围内`、`纯 IPv6`、`IPv4/IPv6 在不同的网卡`
-- 专门适配低配小鸡，比官方 netboot 需要更少的内存
-- 全程用分区表 ID 识别硬盘，确保不会写错硬盘
-- 支持 BIOS、EFI 引导，支持 ARM 服务器
-- 不含自制包，所有资源均实时从镜像源获得
+-   一键重装到 Linux，支持 19 种常见发行版
+-   一键重装到 Windows，使用官方原版 ISO 而非自制镜像，脚本支持自动查找 ISO 链接、自动安装 `VirtIO` 等公有云驱动
+-   支持任意方向重装，即 `Linux to Linux`、`Linux to Windows`、`Windows to Windows`、`Windows to Linux`
+-   自动设置 IP，智能设置动静态，支持 `/32`、`/128`、`网关不在子网范围内`、`纯 IPv6`、`IPv4/IPv6 在不同的网卡`
+-   专门适配低配小鸡，比官方 netboot 需要更少的内存
+-   全程用分区表 ID 识别硬盘，确保不会写错硬盘
+-   支持 BIOS、EFI 引导，支持 ARM 服务器
+-   不含自制包，所有资源均实时从镜像源获得
 
 如果帮到你，可以请我喝奶茶。
 [![Donate](https://img.shields.io/badge/Donate-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://github.com/sponsors/bin456789)
@@ -31,12 +31,12 @@
 
 ## 快速开始
 
-- [下载](#下载当前系统是--linux)
-- [功能 1. 一键重装到 Linux](#功能-1-安装--linux)
-- [功能 2. 一键 DD Raw 镜像到硬盘](#功能-2-dd-raw-镜像到硬盘)
-- [功能 3. 一键引导到 Alpine Live OS 内存系统](#功能-3-重启到--alpine-live-os内存系统)
-- [功能 4. 一键引导到 netboot.xyz](#功能-4-重启到--netbootxyz)
-- [功能 5. 一键重装到 Windows](#功能-5-安装--windows-iso)
+-   [下载](#下载当前系统是--linux)
+-   [功能 1. 一键重装到 Linux](#功能-1-安装--linux)
+-   [功能 2. 一键 DD Raw 镜像到硬盘](#功能-2-dd-raw-镜像到硬盘)
+-   [功能 3. 一键引导到 Alpine Live OS 内存系统](#功能-3-重启到--alpine-live-os内存系统)
+-   [功能 4. 一键引导到 netboot.xyz](#功能-4-重启到--netbootxyz)
+-   [功能 5. 一键重装到 Windows](#功能-5-安装--windows-iso)
 
 ## 系统要求
 
@@ -109,9 +109,9 @@ curl -O https://cnb.cool/bin456789/reinstall/-/git/raw/main/reinstall.sh || wget
 
 用 IE 下载 (先在 IE 高级设置里启用 TLS 1.2)，或者通过远程桌面，将这两个文件保存到同一个目录
 
-- <https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.bat>
+-   <https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.bat>
 
-- <https://www.cygwin.com/setup-x86.exe>
+-   <https://www.cygwin.com/setup-x86.exe>
 
 使用时运行下载的 `reinstall.bat`
 
@@ -133,9 +133,9 @@ certutil -urlcache -f -split https://cnb.cool/bin456789/reinstall/-/git/raw/main
 
 **所有功能** 都可在 Linux / Windows 下运行
 
-- Linux 下运行 `bash reinstall.sh ...`
-- Windows 下先运行 `cmd`，再运行 `reinstall.bat ...`
-  - 如果参数中的链接包含特殊字符，要用 `""` 将链接包裹起来，不能用 `''`
+-   Linux 下运行 `bash reinstall.sh ...`
+-   Windows 下先运行 `cmd`，再运行 `reinstall.bat ...`
+    -   如果参数中的链接包含特殊字符，要用 `""` 将链接包裹起来，不能用 `''`
 
 ### 功能 1: 安装 <img width="16" height="16" src="https://www.kernel.org/theme/images/logos/favicon.png" /> Linux
 
@@ -145,12 +145,12 @@ certutil -urlcache -f -split https://cnb.cool/bin456789/reinstall/-/git/raw/main
 >
 > 数据无价，请三思而后行！
 
-- 用户名 `root` 默认密码 `123@@@`
-- 安装最新版可不输入版本号
-- 最大化利用磁盘空间：不含 boot 分区（Fedora 例外），不含 swap 分区
-- 自动根据机器类型选择不同的优化内核，例如 `Cloud`、`HWE` 内核
-- 安装 Red Hat 时需填写 <https://access.redhat.com/downloads/content/rhel> 得到的 `qcow2` 镜像链接，也可以安装其它类 RHEL 系统，例如 `Alibaba Cloud Linux` 和 `TencentOS Server`
-- 重装后如需修改 SSH 端口或者改成密钥登录，注意还要修改 `/etc/ssh/sshd_config.d/` 里面的文件
+-   用户名 `root` 默认密码 `123@@@`
+-   安装最新版可不输入版本号
+-   最大化利用磁盘空间：不含 boot 分区（Fedora 例外），不含 swap 分区
+-   自动根据机器类型选择不同的优化内核，例如 `Cloud`、`HWE` 内核
+-   安装 Red Hat 时需填写 <https://access.redhat.com/downloads/content/rhel> 得到的 `qcow2` 镜像链接，也可以安装其它类 RHEL 系统，例如 `Alibaba Cloud Linux` 和 `TencentOS Server`
+-   重装后如需修改 SSH 端口或者改成密钥登录，注意还要修改 `/etc/ssh/sshd_config.d/` 里面的文件
 
 ```bash
 bash reinstall.sh anolis      7|8|23
@@ -176,12 +176,12 @@ bash reinstall.sh anolis      7|8|23
 
 #### 可选参数
 
-- `--password PASSWORD` 设置密码
-- `--ssh-key KEY` 设置 SSH 登录公钥，[格式如下](#--ssh-key)。当使用公钥时，密码为空
-- `--ssh-port PORT` 修改 SSH 端口（安装期间观察日志用，也作用于新系统）
-- `--web-port PORT` 修改 Web 端口（安装期间观察日志用）
-- `--frpc-toml /path/to/frpc.toml` 添加 frpc 内网穿透
-- `--hold 2` 安装结束后不重启，此时可以 SSH 登录修改系统内容，系统挂载在 `/os` (此功能不支持 Debian/Kali)
+-   `--password PASSWORD` 设置密码
+-   `--ssh-key KEY` 设置 SSH 登录公钥，[格式如下](#--ssh-key)。当使用公钥时，密码为空
+-   `--ssh-port PORT` 修改 SSH 端口（安装期间观察日志用，也作用于新系统）
+-   `--web-port PORT` 修改 Web 端口（安装期间观察日志用）
+-   `--frpc-toml /path/to/frpc.toml` 添加 frpc 内网穿透
+-   `--hold 2` 安装结束后不重启，此时可以 SSH 登录修改系统内容，系统挂载在 `/os` (此功能不支持 Debian/Kali)
 
 > [!TIP]
 > 安装 Debian/Kali 时，x86 可通过商家后台 VNC 查看安装进度，ARM 可通过串行控制台查看安装进度。
@@ -195,7 +195,7 @@ bash reinstall.sh anolis      7|8|23
 
 云镜像安装 Debian
 
-- 适合于 CPU 较慢的机器
+-   适合于 CPU 较慢的机器
 
 ```bash
 bash reinstall.sh debian --ci
@@ -203,8 +203,8 @@ bash reinstall.sh debian --ci
 
 ISO 安装 CentOS, AlmaLinux, Rocky, Fedora
 
-- 仅支持内存大于 2G 且为动态 IP 的机器
-- 密码 `123@@@`，SSH 端口 `22`，不支持用参数修改
+-   仅支持内存大于 2G 且为动态 IP 的机器
+-   密码 `123@@@`，SSH 端口 `22`，不支持用参数修改
 
 ```bash
 bash reinstall.sh centos --installer
@@ -212,8 +212,8 @@ bash reinstall.sh centos --installer
 
 ISO 安装 Ubuntu
 
-- 仅支持内存大于 1G 且为动态 IP 的机器
-- 密码 `123@@@`，SSH 端口 `22`，不支持用参数修改
+-   仅支持内存大于 1G 且为动态 IP 的机器
+-   密码 `123@@@`，SSH 端口 `22`，不支持用参数修改
 
 ```bash
 bash reinstall.sh ubuntu --installer
@@ -229,9 +229,9 @@ bash reinstall.sh ubuntu --installer
 >
 > 数据无价，请三思而后行！
 
-- 支持 `raw` `vhd` 格式的镜像（未压缩，或者压缩成 `.gz` `.xz` `.zst` `.tar` `.tar.gz` `.tar.xz` `.tar.zst`）
-- DD Windows 镜像时，会自动扩展系统盘，静态 IP 的机器会配置好 IP，可能首次开机几分钟后才生效
-- DD Linux 镜像时，**不会**修改镜像的任何内容
+-   支持 `raw` `vhd` 格式的镜像（未压缩，或者压缩成 `.gz` `.xz` `.zst` `.tar` `.tar.gz` `.tar.xz` `.tar.zst`）
+-   DD Windows 镜像时，会自动扩展系统盘，静态 IP 的机器会配置好 IP，可能首次开机几分钟后才生效
+-   DD Linux 镜像时，**不会**修改镜像的任何内容
 
 ```bash
 bash reinstall.sh dd --img "https://example.com/xxx.xz"
@@ -239,12 +239,13 @@ bash reinstall.sh dd --img "https://example.com/xxx.xz"
 
 #### 可选参数
 
-- `--allow-ping` 设置 Windows 防火墙允许被 Ping (仅限 DD Windows)
-- `--rdp-port PORT` 修改 RDP 端口 (仅限 DD Windows)
-- `--ssh-port PORT` 修改 SSH 端口（安装期间观察日志用）
-- `--web-port PORT` 修改 Web 端口（安装期间观察日志用）
-- `--frpc-toml /path/to/frpc.toml` 添加 frpc 内网穿透（仅限 DD Windows）
-- `--hold 2` DD 结束后不重启，此时可以 SSH 登录修改系统内容，Windows 系统会挂载在 `/os`，Linux 系统**不会**自动挂载
+-   `--password PASSWORD` 设置密码（DD Windows 时使用）
+-   `--allow-ping` 设置 Windows 防火墙允许被 Ping (仅限 DD Windows)
+-   `--rdp-port PORT` 修改 RDP 端口，默认 3389 (仅限 DD Windows)
+-   `--ssh-port PORT` 修改 SSH 端口（安装期间观察日志用）
+-   `--web-port PORT` 修改 Web 端口（安装期间观察日志用）
+-   `--frpc-toml /path/to/frpc.toml` 添加 frpc 内网穿透（仅限 DD Windows）
+-   `--hold 2` DD 结束后不重启，此时可以 SSH 登录修改系统内容，Windows 系统会挂载在 `/os`，Linux 系统**不会**自动挂载
 
 > [!TIP]
 > 可通过多种方式（SSH、HTTP 80 端口、商家后台 VNC、串行控制台）查看安装进度。
@@ -252,8 +253,8 @@ bash reinstall.sh dd --img "https://example.com/xxx.xz"
 
 ### 功能 3: 重启到 <img width="16" height="16" src="https://www.alpinelinux.org/alpine-logo.ico" /> Alpine Live OS（内存系统）
 
-- 可用 ssh 连接，进行备份/恢复硬盘、手动 DD、修改分区、手动安装 Alpine 等操作
-- 用户名 `root` 默认密码 `123@@@`
+-   可用 ssh 连接，进行备份/恢复硬盘、手动 DD、修改分区、手动安装 Alpine 等操作
+-   用户名 `root` 默认密码 `123@@@`
 
 > [!TIP]
 >
@@ -267,14 +268,14 @@ bash reinstall.sh alpine --hold=1
 
 #### 可选参数
 
-- `--password PASSWORD` 设置密码
-- `--ssh-port PORT` 修改 SSH 端口
-- `--ssh-key KEY` 设置 SSH 登录公钥，[格式如下](#--ssh-key)。当使用公钥时，密码为空
-- `--frpc-toml /path/to/frpc.toml` 添加 frpc 内网穿透
+-   `--password PASSWORD` 设置密码
+-   `--ssh-port PORT` 修改 SSH 端口
+-   `--ssh-key KEY` 设置 SSH 登录公钥，[格式如下](#--ssh-key)。当使用公钥时，密码为空
+-   `--frpc-toml /path/to/frpc.toml` 添加 frpc 内网穿透
 
 ### 功能 4: 重启到 <img width="16" height="16" src="https://netboot.xyz/img/favicon.ico" /> netboot.xyz
 
-- 可使用商家后台 VNC 手动安装 [更多系统](https://github.com/netbootxyz/netboot.xyz?tab=readme-ov-file#what-operating-systems-are-currently-available-on-netbootxyz)
+-   可使用商家后台 VNC 手动安装 [更多系统](https://github.com/netbootxyz/netboot.xyz?tab=readme-ov-file#what-operating-systems-are-currently-available-on-netbootxyz)
 
 > [!TIP]
 >
@@ -298,24 +299,24 @@ bash reinstall.sh netboot.xyz
 >
 > 数据无价，请三思而后行！
 
-- 用户名 `administrator` 默认密码 `123@@@`
-- 如果远程登录失败，可以尝试使用用户名 `.\administrator`
-- 静态机器会自动配置好 IP，可能首次开机几分钟后才生效
-- 支持所有语言
+-   用户名 `administrator` 默认密码 `123@@@`
+-   如果远程登录失败，可以尝试使用用户名 `.\administrator`
+-   静态机器会自动配置好 IP，可能首次开机几分钟后才生效
+-   支持所有语言
 
 #### 支持的系统
 
-- Windows (Vista ~ 11)
-- Windows Server (2008 ~ 2025)
-  - Windows Server Essentials \*
-  - Windows Server (Semi) Annual Channel \*
-  - Hyper-V Server \*
-  - Azure Local (Azure Stack HCI) \*
+-   Windows (Vista ~ 11)
+-   Windows Server (2008 ~ 2025)
+    -   Windows Server Essentials \*
+    -   Windows Server (Semi) Annual Channel \*
+    -   Hyper-V Server \*
+    -   Azure Local (Azure Stack HCI) \*
 
 #### 方法 1: 让脚本自动查找 ISO
 
-- 脚本会从 <https://massgrave.dev/genuine-installation-media> 查找 ISO，该网站专门提供官方 ISO 下载
-- 上面带 \* 的系统不支持自动查找 ISO
+-   脚本会从 <https://massgrave.dev/genuine-installation-media> 查找 ISO，该网站专门提供官方 ISO 下载
+-   上面带 \* 的系统不支持自动查找 ISO
 
 ```bash
 bash reinstall.sh windows \
@@ -372,7 +373,7 @@ zh-tw
 
 #### 方法 2: 自行指定 ISO 连接
 
-- 如果不知道 `--image-name`，可以随便填，在重启后连接 SSH，根据错误提示重新输入正确的值
+-   如果不知道 `--image-name`，可以随便填，在重启后连接 SSH，根据错误提示重新输入正确的值
 
 ```bash
 bash reinstall.sh windows \
@@ -392,50 +393,50 @@ bash reinstall.sh windows \
 
 <summary>以下网站可找到 ISO 链接</summary>
 
-- 正式版
-  - <https://msdl.gravesoft.dev>
-  - <https://massgrave.dev/genuine-installation-media>
-  - <https://next.itellyou.cn>
-  - <https://www.xitongku.com>
-  - <https://www.microsoft.com/software-download/windows10> (需用非 Windows User-Agent 打开)
-  - <https://www.microsoft.com/software-download/windows11>
-  - <https://www.microsoft.com/software-download/windows11arm64>
-- 评估版
-  - <https://www.microsoft.com/evalcenter/download-windows-10-enterprise>
-  - <https://www.microsoft.com/evalcenter/download-windows-11-enterprise>
-  - <https://www.microsoft.com/evalcenter/download-windows-11-iot-enterprise-ltsc-eval>
-  - <https://www.microsoft.com/evalcenter/download-windows-server-2012-r2>
-  - <https://www.microsoft.com/evalcenter/download-windows-server-2016>
-  - <https://www.microsoft.com/evalcenter/download-windows-server-2019>
-  - <https://www.microsoft.com/evalcenter/download-windows-server-2022>
-  - <https://www.microsoft.com/evalcenter/download-windows-server-2025>
-- Insider 预览版
-  - <https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso>
-  - <https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewserver>
+-   正式版
+    -   <https://msdl.gravesoft.dev>
+    -   <https://massgrave.dev/genuine-installation-media>
+    -   <https://next.itellyou.cn>
+    -   <https://www.xitongku.com>
+    -   <https://www.microsoft.com/software-download/windows10> (需用非 Windows User-Agent 打开)
+    -   <https://www.microsoft.com/software-download/windows11>
+    -   <https://www.microsoft.com/software-download/windows11arm64>
+-   评估版
+    -   <https://www.microsoft.com/evalcenter/download-windows-10-enterprise>
+    -   <https://www.microsoft.com/evalcenter/download-windows-11-enterprise>
+    -   <https://www.microsoft.com/evalcenter/download-windows-11-iot-enterprise-ltsc-eval>
+    -   <https://www.microsoft.com/evalcenter/download-windows-server-2012-r2>
+    -   <https://www.microsoft.com/evalcenter/download-windows-server-2016>
+    -   <https://www.microsoft.com/evalcenter/download-windows-server-2019>
+    -   <https://www.microsoft.com/evalcenter/download-windows-server-2022>
+    -   <https://www.microsoft.com/evalcenter/download-windows-server-2025>
+-   Insider 预览版
+    -   <https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso>
+    -   <https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewserver>
 
 </details>
 
 #### 可选参数
 
-- `--password PASSWORD` 设置密码
-- `--allow-ping` 设置 Windows 防火墙允许被 Ping
-- `--rdp-port PORT` 更改 RDP 端口
-- `--ssh-port PORT` 修改 SSH 端口（仅安装期间观察日志用）
-- `--web-port PORT` 修改 Web 端口（仅安装期间观察日志用）
-- `--add-driver INF_OR_DIR` 添加额外驱动，填写 .inf 路径，或者 .inf 所在的文件夹
-  - 需先下载驱动到当前系统
-  - 可多次设置该参数以添加不同的驱动
-- `--frpc-toml /path/to/frpc.toml` 添加 frpc 内网穿透
-- `--hold 2` 在进入 Windows 官方安装程序之前，可以 SSH 登录修改硬盘内容，硬盘挂载在 `/os`
+-   `--password PASSWORD` 设置密码
+-   `--allow-ping` 设置 Windows 防火墙允许被 Ping
+-   `--rdp-port PORT` 更改 RDP 端口，默认 3389
+-   `--ssh-port PORT` 修改 SSH 端口（仅安装期间观察日志用）
+-   `--web-port PORT` 修改 Web 端口（仅安装期间观察日志用）
+-   `--add-driver INF_OR_DIR` 添加额外驱动，填写 .inf 路径，或者 .inf 所在的文件夹
+    -   需先下载驱动到当前系统
+    -   可多次设置该参数以添加不同的驱动
+-   `--frpc-toml /path/to/frpc.toml` 添加 frpc 内网穿透
+-   `--hold 2` 在进入 Windows 官方安装程序之前，可以 SSH 登录修改硬盘内容，硬盘挂载在 `/os`
 
 #### 以下驱动会自动按需下载安装，无需手动添加
 
-- VirtIO ([社区版][virtio-virtio], [阿里云][virtio-aliyun], [腾讯云][virtio-qcloud], [GCP][virtio-gcp])
-- XEN ([~~社区版~~][xen-xen] (未签名), [Citrix][xen-citrix], [AWS][xen-aws])
-- AWS ([ENA 网卡][aws-ena], [NVME 存储控制器][aws-nvme])
-- GCP ([gVNIC 网卡][gcp-gvnic], [GGA 显卡][gcp-gga])
-- Azure ([MANA 网卡][azure-mana])
-- Intel ([VMD 存储控制器][intel-vmd], 网卡: [7][intel-nic-7], [8][intel-nic-8], [8.1][intel-nic-8.1], [10][intel-nic-10], [11][intel-nic-11], [2008 R2][intel-nic-2008-r2], [2012][intel-nic-2012], [2012 R2][intel-nic-2012-r2], [2016][intel-nic-2016], [2019][intel-nic-2019], [2022][intel-nic-2022], [2025][intel-nic-2025])
+-   VirtIO ([社区版][virtio-virtio], [阿里云][virtio-aliyun], [腾讯云][virtio-qcloud], [GCP][virtio-gcp])
+-   XEN ([~~社区版~~][xen-xen] (未签名), [Citrix][xen-citrix], [AWS][xen-aws])
+-   AWS ([ENA 网卡][aws-ena], [NVME 存储控制器][aws-nvme])
+-   GCP ([gVNIC 网卡][gcp-gvnic], [GGA 显卡][gcp-gga])
+-   Azure ([MANA 网卡][azure-mana])
+-   Intel ([VMD 存储控制器][intel-vmd], 网卡: [7][intel-nic-7], [8][intel-nic-8], [8.1][intel-nic-8.1], [10][intel-nic-10], [11][intel-nic-11], [2008 R2][intel-nic-2008-r2], [2012][intel-nic-2012], [2012 R2][intel-nic-2012-r2], [2016][intel-nic-2016], [2019][intel-nic-2019], [2022][intel-nic-2022], [2025][intel-nic-2025])
 
 [virtio-virtio]: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/
 [virtio-aliyun]: https://www.alibabacloud.com/help/ecs/user-guide/install-the-virtio-driver-1
@@ -530,14 +531,14 @@ Windows Server 2025 SERVERDATACENTER
 
 ### --ssh-key
 
-- `--ssh-key "ssh-rsa ..."`
-- `--ssh-key "ssh-ed25519 ..."`
-- `--ssh-key "ecdsa-sha2-nistp256/384/521 ..."`
-- `--ssh-key http://path/to/public_key`
-- `--ssh-key github:your_username`
-- `--ssh-key gitlab:your_username`
-- `--ssh-key /path/to/public_key`
-- `--ssh-key C:\path\to\public_key`
+-   `--ssh-key "ssh-rsa ..."`
+-   `--ssh-key "ssh-ed25519 ..."`
+-   `--ssh-key "ecdsa-sha2-nistp256/384/521 ..."`
+-   `--ssh-key http://path/to/public_key`
+-   `--ssh-key github:your_username`
+-   `--ssh-key gitlab:your_username`
+-   `--ssh-key /path/to/public_key`
+-   `--ssh-key C:\path\to\public_key`
 
 ## 如何修改脚本自用
 

@@ -10,14 +10,14 @@ One-Click system reinstallation script for VPS [中文](README.md)
 
 ## Introduction
 
-- One-click reinstallation to Linux: Supports 19 common distributions.
-- One-click reinstallation to Windows: Uses the official original ISO instead of custom images. The script can automatically fetch the ISO link and installs public cloud drivers like `VirtIO`.
-- Supports reinstallation in any direction, i.e., `Linux to Linux`, `Linux to Windows`, `Windows to Windows`, `Windows to Linux`
-- Automatically configures IP and intelligently sets it as static or dynamic. Supports `/32`, `/128`, `gateway outside subnet`, `IPv6 only`, `IPv4/IPv6 on different NIC`
-- Specially optimized for low-spec servers, requires less memory than the official netboot
-- Uses partition table ID to identify hard drives throughout the process, ensuring no wrong disk is written
-- Supports BIOS and EFI boot, and ARM Server
-- No homemades image included, all resources are obtained in real-time from mirror sites
+-   One-click reinstallation to Linux: Supports 19 common distributions.
+-   One-click reinstallation to Windows: Uses the official original ISO instead of custom images. The script can automatically fetch the ISO link and installs public cloud drivers like `VirtIO`.
+-   Supports reinstallation in any direction, i.e., `Linux to Linux`, `Linux to Windows`, `Windows to Windows`, `Windows to Linux`
+-   Automatically configures IP and intelligently sets it as static or dynamic. Supports `/32`, `/128`, `gateway outside subnet`, `IPv6 only`, `IPv4/IPv6 on different NIC`
+-   Specially optimized for low-spec servers, requires less memory than the official netboot
+-   Uses partition table ID to identify hard drives throughout the process, ensuring no wrong disk is written
+-   Supports BIOS and EFI boot, and ARM Server
+-   No homemades image included, all resources are obtained in real-time from mirror sites
 
 If this helped you, you can buy me a milk tea.
 [![Donate](https://img.shields.io/badge/Donate-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://github.com/sponsors/bin456789)
@@ -31,12 +31,12 @@ If this helped you, you can buy me a milk tea.
 
 ## Quick Start
 
-- [Download](#download-current-system-is--linux)
-- [Feature 1. One-click reinstallation to Linux](#feature-1-install--linux)
-- [Feature 2. One-click DD Raw image to hard disk](#feature-2-dd-raw-image-to-hard-disk)
-- [Feature 3. One-click reboot to Alpine Live OS in-memory system](#feature-3-reboot-to--alpine-live-os-ram-os)
-- [Feature 4. One-click reboot to netboot.xyz](#feature-4-reboot-to--netbootxyz)
-- [Feature 5. One-click reinstallation to Windows](#feature-5-install--windows-iso)
+-   [Download](#download-current-system-is--linux)
+-   [Feature 1. One-click reinstallation to Linux](#feature-1-install--linux)
+-   [Feature 2. One-click DD Raw image to hard disk](#feature-2-dd-raw-image-to-hard-disk)
+-   [Feature 3. One-click reboot to Alpine Live OS in-memory system](#feature-3-reboot-to--alpine-live-os-ram-os)
+-   [Feature 4. One-click reboot to netboot.xyz](#feature-4-reboot-to--netbootxyz)
+-   [Feature 5. One-click reinstallation to Windows](#feature-5-install--windows-iso)
 
 ## System Requirements
 
@@ -109,9 +109,9 @@ Due to lack of support for TLS 1.2, SHA-256, or outdated root certificates, Wind
 
 Use Internet Explorer (enable TLS 1.2 in IE's advanced settings first) to download, or use Remote Desktop to save the following two files into the same directory:
 
-- <https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.bat>
+-   <https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.bat>
 
-- <https://www.cygwin.com/setup-x86.exe>
+-   <https://www.cygwin.com/setup-x86.exe>
 
 To use, run the downloaded `reinstall.bat`.
 
@@ -133,9 +133,9 @@ certutil -urlcache -f -split https://cnb.cool/bin456789/reinstall/-/git/raw/main
 
 **All features** can be used on both Linux and Windows.
 
-- on Linux, run `bash reinstall.sh ...`
-- on Windows, first run `cmd`, then run `.\reinstall.bat ...`
-  - If the link in the parameter contains special characters, it should be enclosed in `""`, not `''`.
+-   on Linux, run `bash reinstall.sh ...`
+-   on Windows, first run `cmd`, then run `.\reinstall.bat ...`
+    -   If the link in the parameter contains special characters, it should be enclosed in `""`, not `''`.
 
 ### Feature 1: Install <img width="16" height="16" src="https://www.kernel.org/theme/images/logos/favicon.png" /> Linux
 
@@ -145,12 +145,12 @@ certutil -urlcache -f -split https://cnb.cool/bin456789/reinstall/-/git/raw/main
 >
 > Data is priceless — please think twice before proceeding!
 
-- The username is `root` with a default password of `123@@@`.
-- When installing the latest version, the version number does not need to be specified.
-- Maximizes disk space usage: no boot partition (except for Fedora) and no swap partition.
-- Automatically selects different optimized kernels based on machine type, such as `Cloud` or `HWE` kernels.
-- When installing Red Hat, you must provide the `qcow2` image link obtained from <https://access.redhat.com/downloads/content/rhel>. You can also install other RHEL-based OS, such as `Alibaba Cloud Linux` and `TencentOS Server`.
-- After reinstallation, if you need to change the SSH port or switch to key-based login, make sure to also modify the files inside `/etc/ssh/sshd_config.d/`.
+-   The username is `root` with a default password of `123@@@`.
+-   When installing the latest version, the version number does not need to be specified.
+-   Maximizes disk space usage: no boot partition (except for Fedora) and no swap partition.
+-   Automatically selects different optimized kernels based on machine type, such as `Cloud` or `HWE` kernels.
+-   When installing Red Hat, you must provide the `qcow2` image link obtained from <https://access.redhat.com/downloads/content/rhel>. You can also install other RHEL-based OS, such as `Alibaba Cloud Linux` and `TencentOS Server`.
+-   After reinstallation, if you need to change the SSH port or switch to key-based login, make sure to also modify the files inside `/etc/ssh/sshd_config.d/`.
 
 ```bash
 bash reinstall.sh anolis      7|8|23
@@ -176,12 +176,12 @@ bash reinstall.sh anolis      7|8|23
 
 #### Optional Parameters
 
-- `--password PASSWORD` Set the password
-- `--ssh-key KEY` Set up SSH login public key, [formatted as follows](#--ssh-key). When using public key, password is empty.
-- `--ssh-port PORT` Change the SSH port (for log observation during installation and for the new system)
-- `--web-port PORT` Change the Web port (for log observation during installation only)
-- `--frpc-toml /path/to/frpc.toml` Add frpc for intranet tunneling
-- `--hold 2` Prevent reboot after installation completes, allowing SSH login to modify system content; the system is mounted at `/os` (this feature is not supported on Debian/Kali).
+-   `--password PASSWORD` Set the password
+-   `--ssh-key KEY` Set up SSH login public key, [formatted as follows](#--ssh-key). When using public key, password is empty.
+-   `--ssh-port PORT` Change the SSH port (for log observation during installation and for the new system)
+-   `--web-port PORT` Change the Web port (for log observation during installation only)
+-   `--frpc-toml /path/to/frpc.toml` Add frpc for intranet tunneling
+-   `--hold 2` Prevent reboot after installation completes, allowing SSH login to modify system content; the system is mounted at `/os` (this feature is not supported on Debian/Kali).
 
 > [!TIP]
 > When installing Debian/Kali, x86 architectures can monitor the installation progress through VNC from server provider, while ARM architectures can use the serial console.
@@ -195,7 +195,7 @@ bash reinstall.sh anolis      7|8|23
 
 Install Debian using a cloud image
 
-- Suitable for machines with slower CPUs
+-   Suitable for machines with slower CPUs
 
 ```bash
 bash reinstall.sh debian --ci
@@ -203,8 +203,8 @@ bash reinstall.sh debian --ci
 
 Install CentOS, AlmaLinux, Rocky, Fedora using ISO
 
-- Only supports machines with more than 2G of memory and dynamic IP.
-- Password is `123@@@`, and the SSH port is `22`; modifying them using parameters is not supported.
+-   Only supports machines with more than 2G of memory and dynamic IP.
+-   Password is `123@@@`, and the SSH port is `22`; modifying them using parameters is not supported.
 
 ```bash
 bash reinstall.sh centos --installer
@@ -212,8 +212,8 @@ bash reinstall.sh centos --installer
 
 Install Ubuntu using ISO
 
-- Only supports machines with more than 1G of memory and dynamic IP.
-- Password is `123@@@`, and the SSH port is `22`; modifying them using parameters is not supported.
+-   Only supports machines with more than 1G of memory and dynamic IP.
+-   Password is `123@@@`, and the SSH port is `22`; modifying them using parameters is not supported.
 
 ```bash
 bash reinstall.sh ubuntu --installer
@@ -229,9 +229,9 @@ bash reinstall.sh ubuntu --installer
 >
 > Data is priceless — please think twice before proceeding!
 
-- Supports `raw` and `vhd` image formats (either uncompressed or compressed as `.gz`, `.xz`, `.zst`, `.tar`, `.tar.gz`, `.tar.xz`, `.tar.zst`).
-- When deploy a Windows image, the system disk will be automatically expanded, and machines with a static IP will have their IP configured, and may take a few minutes after the first boot for the configuration to take effect.
-- When deploy a Linux image, will **NOT** modify any contents of the image.
+-   Supports `raw` and `vhd` image formats (either uncompressed or compressed as `.gz`, `.xz`, `.zst`, `.tar`, `.tar.gz`, `.tar.xz`, `.tar.zst`).
+-   When deploy a Windows image, the system disk will be automatically expanded, and machines with a static IP will have their IP configured, and may take a few minutes after the first boot for the configuration to take effect.
+-   When deploy a Linux image, will **NOT** modify any contents of the image.
 
 ```bash
 bash reinstall.sh dd --img "https://example.com/xxx.xz"
@@ -239,12 +239,13 @@ bash reinstall.sh dd --img "https://example.com/xxx.xz"
 
 #### Optional Parameters
 
-- `--allow-ping` Configure Windows Firewall to Allow Ping Responses (DD Windows only)
-- `--rdp-port PORT` Change RDP port (DD Windows only)
-- `--ssh-port PORT` Change SSH port (for log observation during installation)
-- `--web-port PORT` Change Web port (for log observation during installation)
-- `--frpc-toml /path/to/frpc.toml` Add frpc for intranet tunneling (DD Windows only)
-- `--hold 2` Prevent reboot after the DD process finishes, allowing SSH login to modify system content. The Windows system will be mounted at `/os`, but Linux systems will **NOT** be automatically mounted.
+-   `--password PASSWORD` Set password (for DD Windows)
+-   `--allow-ping` Configure Windows Firewall to Allow Ping Responses (DD Windows only)
+-   `--rdp-port PORT` Change RDP port, default is 3389 (DD Windows only)
+-   `--ssh-port PORT` Change SSH port (for log observation during installation)
+-   `--web-port PORT` Change Web port (for log observation during installation)
+-   `--frpc-toml /path/to/frpc.toml` Add frpc for intranet tunneling (DD Windows only)
+-   `--hold 2` Prevent reboot after the DD process finishes, allowing SSH login to modify system content. The Windows system will be mounted at `/os`, but Linux systems will **NOT** be automatically mounted.
 
 > [!TIP]
 > Can monitor the progress through various methods (SSH, HTTP 80 port, VNC from server provider, serial console).
@@ -252,8 +253,8 @@ bash reinstall.sh dd --img "https://example.com/xxx.xz"
 
 ### Feature 3: Reboot to <img width="16" height="16" src="https://www.alpinelinux.org/alpine-logo.ico" /> Alpine Live OS (RAM OS)
 
-- You can use SSH to backup/restore disk, manually perform DD operations, partition modifications, manual Alpine installation, and other operations.
-- Username `root`, Default password `123@@@`
+-   You can use SSH to backup/restore disk, manually perform DD operations, partition modifications, manual Alpine installation, and other operations.
+-   Username `root`, Default password `123@@@`
 
 > [!TIP]
 >
@@ -267,14 +268,14 @@ bash reinstall.sh alpine --hold=1
 
 #### Optional Parameters
 
-- `--password PASSWORD` Set password
-- `--ssh-port PORT` Change SSH port
-- `--ssh-key KEY` Set up SSH login public key, [formatted as follows](#--ssh-key). When using public key, password is empty.
-- `--frpc-toml /path/to/frpc.toml` Add frpc for intranet tunneling
+-   `--password PASSWORD` Set password
+-   `--ssh-port PORT` Change SSH port
+-   `--ssh-key KEY` Set up SSH login public key, [formatted as follows](#--ssh-key). When using public key, password is empty.
+-   `--frpc-toml /path/to/frpc.toml` Add frpc for intranet tunneling
 
 ### Feature 4: Reboot to <img width="16" height="16" src="https://netboot.xyz/img/favicon.ico" /> netboot.xyz
 
-- Can manually install [more systems](https://github.com/netbootxyz/netboot.xyz?tab=readme-ov-file#what-operating-systems-are-currently-available-on-netbootxyz) using vendor backend VNC.
+-   Can manually install [more systems](https://github.com/netbootxyz/netboot.xyz?tab=readme-ov-file#what-operating-systems-are-currently-available-on-netbootxyz) using vendor backend VNC.
 
 > [!TIP]
 >
@@ -298,24 +299,24 @@ bash reinstall.sh netboot.xyz
 >
 > Data is priceless — please think twice before proceeding!
 
-- Username `administrator`, Default password `123@@@`
-- If remote login fails, try using the username `.\administrator`.
-- The machine with a static IP will automatically configure the IP. It may take a few minutes to take effect on the first boot.
-- Supports all languages.
+-   Username `administrator`, Default password `123@@@`
+-   If remote login fails, try using the username `.\administrator`.
+-   The machine with a static IP will automatically configure the IP. It may take a few minutes to take effect on the first boot.
+-   Supports all languages.
 
 #### Supported Systems
 
-- Windows (Vista ~ 11)
-- Windows Server (2008 ~ 2025)
-  - Windows Server Essentials \*
-  - Windows Server (Semi) Annual Channel \*
-  - Hyper-V Server \*
-  - Azure Local (Azure Stack HCI) \*
+-   Windows (Vista ~ 11)
+-   Windows Server (2008 ~ 2025)
+    -   Windows Server Essentials \*
+    -   Windows Server (Semi) Annual Channel \*
+    -   Hyper-V Server \*
+    -   Azure Local (Azure Stack HCI) \*
 
 #### Method 1: Let the Script Automatically Search for ISO
 
-- The script will search for ISOs from <https://massgrave.dev/genuine-installation-media>, a site that collects official ISOs.
-- Systems marked with \* do not support automatic ISO searching.
+-   The script will search for ISOs from <https://massgrave.dev/genuine-installation-media>, a site that collects official ISOs.
+-   Systems marked with \* do not support automatic ISO searching.
 
 ```bash
 bash reinstall.sh windows \
@@ -372,7 +373,7 @@ zh-tw
 
 #### Method 2: Specify the ISO link manually
 
-- If you don't know the `--image-name`, you can enter any value. After rebooting, connect via SSH and re-enter the correct value based on the error messages.
+-   If you don't know the `--image-name`, you can enter any value. After rebooting, connect via SSH and re-enter the correct value based on the error messages.
 
 ```bash
 bash reinstall.sh windows \
@@ -392,50 +393,50 @@ bash reinstall.sh windows \
 
 <summary>The following website provides ISO links.</summary>
 
-- General
-  - <https://msdl.gravesoft.dev>
-  - <https://massgrave.dev/genuine-installation-media>
-  - <https://next.itellyou.cn>
-  - <https://www.xitongku.com>
-  - <https://www.microsoft.com/software-download/windows10> (Need to open it with a non-Windows User-Agent)
-  - <https://www.microsoft.com/software-download/windows11>
-  - <https://www.microsoft.com/software-download/windows11arm64>
-- Evaluation
-  - <https://www.microsoft.com/evalcenter/download-windows-10-enterprise>
-  - <https://www.microsoft.com/evalcenter/download-windows-11-enterprise>
-  - <https://www.microsoft.com/evalcenter/download-windows-11-iot-enterprise-ltsc-eval>
-  - <https://www.microsoft.com/evalcenter/download-windows-server-2012-r2>
-  - <https://www.microsoft.com/evalcenter/download-windows-server-2016>
-  - <https://www.microsoft.com/evalcenter/download-windows-server-2019>
-  - <https://www.microsoft.com/evalcenter/download-windows-server-2022>
-  - <https://www.microsoft.com/evalcenter/download-windows-server-2025>
-- Insider Preview
-  - <https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso>
-  - <https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewserver>
+-   General
+    -   <https://msdl.gravesoft.dev>
+    -   <https://massgrave.dev/genuine-installation-media>
+    -   <https://next.itellyou.cn>
+    -   <https://www.xitongku.com>
+    -   <https://www.microsoft.com/software-download/windows10> (Need to open it with a non-Windows User-Agent)
+    -   <https://www.microsoft.com/software-download/windows11>
+    -   <https://www.microsoft.com/software-download/windows11arm64>
+-   Evaluation
+    -   <https://www.microsoft.com/evalcenter/download-windows-10-enterprise>
+    -   <https://www.microsoft.com/evalcenter/download-windows-11-enterprise>
+    -   <https://www.microsoft.com/evalcenter/download-windows-11-iot-enterprise-ltsc-eval>
+    -   <https://www.microsoft.com/evalcenter/download-windows-server-2012-r2>
+    -   <https://www.microsoft.com/evalcenter/download-windows-server-2016>
+    -   <https://www.microsoft.com/evalcenter/download-windows-server-2019>
+    -   <https://www.microsoft.com/evalcenter/download-windows-server-2022>
+    -   <https://www.microsoft.com/evalcenter/download-windows-server-2025>
+-   Insider Preview
+    -   <https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewiso>
+    -   <https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewserver>
 
 </details>
 
 #### Optional Parameters
 
-- `--password PASSWORD` Set Password
-- `--allow-ping` Configure Windows Firewall to Allow Ping Responses
-- `--rdp-port PORT` Change RDP port
-- `--ssh-port PORT` Change SSH port (for log observation during installation only)
-- `--web-port PORT` Change Web port (for log observation during installation only)
-- `--add-driver INF_OR_DIR` Add additional driver, specifying .inf path, or the folder contains .inf file.
-  - The driver must be downloaded to current system first.
-  - This parameter can be set multiple times to add different driver.
-- `--frpc-toml /path/to/frpc.toml` Add frpc for intranet tunneling
-- `--hold 2` Allow SSH connections for modifying the disk content before rebooting into the official Windows installation program, with the disk mounted at `/os`.
+-   `--password PASSWORD` Set Password
+-   `--allow-ping` Configure Windows Firewall to Allow Ping Responses
+-   `--rdp-port PORT` Change RDP port, default is 3389
+-   `--ssh-port PORT` Change SSH port (for log observation during installation only)
+-   `--web-port PORT` Change Web port (for log observation during installation only)
+-   `--add-driver INF_OR_DIR` Add additional driver, specifying .inf path, or the folder contains .inf file.
+    -   The driver must be downloaded to current system first.
+    -   This parameter can be set multiple times to add different driver.
+-   `--frpc-toml /path/to/frpc.toml` Add frpc for intranet tunneling
+-   `--hold 2` Allow SSH connections for modifying the disk content before rebooting into the official Windows installation program, with the disk mounted at `/os`.
 
 #### The following drivers will automatic download and install as needed, without the need for manual addition
 
-- VirtIO ([Community][virtio-virtio], [Alibaba Cloud][virtio-aliyun], [Tencent Cloud][virtio-qcloud], [GCP][virtio-gcp])
-- XEN ([~~Community~~][xen-xen] (unsigned), [Citrix][xen-citrix], [AWS][xen-aws])
-- AWS ([ENA Network Adapter][aws-ena], [NVME Storage Controller][aws-nvme])
-- GCP ([gVNIC Network Adapter][gcp-gvnic], [GGA Display Adapter][gcp-gga])
-- Azure ([MANA Network Adapter][azure-mana])
-- Intel ([VMD Storage Controller][intel-vmd], Network Adapter: [7][intel-nic-7], [8][intel-nic-8], [8.1][intel-nic-8.1], [10][intel-nic-10], [11][intel-nic-11], [2008 R2][intel-nic-2008-r2], [2012][intel-nic-2012], [2012 R2][intel-nic-2012-r2], [2016][intel-nic-2016], [2019][intel-nic-2019], [2022][intel-nic-2022], [2025][intel-nic-2025])
+-   VirtIO ([Community][virtio-virtio], [Alibaba Cloud][virtio-aliyun], [Tencent Cloud][virtio-qcloud], [GCP][virtio-gcp])
+-   XEN ([~~Community~~][xen-xen] (unsigned), [Citrix][xen-citrix], [AWS][xen-aws])
+-   AWS ([ENA Network Adapter][aws-ena], [NVME Storage Controller][aws-nvme])
+-   GCP ([gVNIC Network Adapter][gcp-gvnic], [GGA Display Adapter][gcp-gga])
+-   Azure ([MANA Network Adapter][azure-mana])
+-   Intel ([VMD Storage Controller][intel-vmd], Network Adapter: [7][intel-nic-7], [8][intel-nic-8], [8.1][intel-nic-8.1], [10][intel-nic-10], [11][intel-nic-11], [2008 R2][intel-nic-2008-r2], [2012][intel-nic-2012], [2012 R2][intel-nic-2012-r2], [2016][intel-nic-2016], [2019][intel-nic-2019], [2022][intel-nic-2022], [2025][intel-nic-2025])
 
 [virtio-virtio]: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/
 [virtio-aliyun]: https://www.alibabacloud.com/help/ecs/user-guide/install-the-virtio-driver-1
@@ -530,14 +531,14 @@ Log in to the server using Remote Desktop, open Device Manager, locate the graph
 
 ### --ssh-key
 
-- `--ssh-key "ssh-rsa ..."`
-- `--ssh-key "ssh-ed25519 ..."`
-- `--ssh-key "ecdsa-sha2-nistp256/384/521 ..."`
-- `--ssh-key http://path/to/public_key`
-- `--ssh-key github:your_username`
-- `--ssh-key gitlab:your_username`
-- `--ssh-key /path/to/public_key`
-- `--ssh-key C:\path\to\public_key`
+-   `--ssh-key "ssh-rsa ..."`
+-   `--ssh-key "ssh-ed25519 ..."`
+-   `--ssh-key "ecdsa-sha2-nistp256/384/521 ..."`
+-   `--ssh-key http://path/to/public_key`
+-   `--ssh-key github:your_username`
+-   `--ssh-key gitlab:your_username`
+-   `--ssh-key /path/to/public_key`
+-   `--ssh-key C:\path\to\public_key`
 
 ## How to Modify the Script for Your Own
 
