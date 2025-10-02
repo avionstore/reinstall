@@ -7036,124 +7036,124 @@ EOF
 
 trans() {
     info "PROSES AVION STORE INSTALLER"
+    {
+        mod_motd
 
-    mod_motd
+        # 先检查 modloop 是否正常
+        # 防止格式化硬盘后，缺少 ext4 模块导致 mount 失败
+        # https://github.com/bin456789/reinstall/issues/136
+        ensure_service_started modloop
 
-    # 先检查 modloop 是否正常
-    # 防止格式化硬盘后，缺少 ext4 模块导致 mount 失败
-    # https://github.com/bin456789/reinstall/issues/136
-    ensure_service_started modloop
+        cat /proc/cmdline
+        clear_previous
+        add_community_repo
 
-    cat /proc/cmdline
-    clear_previous
-    add_community_repo
+        # 需要在重新分区之前，找到主硬盘
+        # 重新运行脚本时，可指定 xda
+        # xda=sda ash trans.start
+        if [ -z "$xda" ]; then
+            find_xda
+        fi
 
-    # 需要在重新分区之前，找到主硬盘
-    # 重新运行脚本时，可指定 xda
-    # xda=sda ash trans.start
-    if [ -z "$xda" ]; then
-        find_xda
-    fi
+        if [ "$distro" != "alpine" ]; then
+            setup_web_if_enough_ram
+            # util-linux 包含 lsblk
+            # util-linux 可自动探测 mount 格式
+            apk add util-linux
+        fi
 
-    if [ "$distro" != "alpine" ]; then
-        setup_web_if_enough_ram
-        # util-linux 包含 lsblk
-        # util-linux 可自动探测 mount 格式
-        apk add util-linux
-    fi
+        # dd qemu 切换成云镜像模式，暂时没用到
+        # shellcheck disable=SC2154
+        if [ "$distro" = "dd" ] && [ "$img_type" = "qemu" ]; then
+            # 移到 reinstall.sh ?
+            distro=any
+            cloud_image=1
+        fi
 
-    # dd qemu 切换成云镜像模式，暂时没用到
-    # shellcheck disable=SC2154
-    if [ "$distro" = "dd" ] && [ "$img_type" = "qemu" ]; then
-        # 移到 reinstall.sh ?
-        distro=any
-        cloud_image=1
-    fi
-
-    if is_use_cloud_image; then
-        case "$img_type" in
-        qemu)
-            create_part
-            download_qcow
-            case "$distro" in
-            centos | almalinux | rocky | oracle | redhat | anolis | opencloudos | openeuler)
-                # 这几个系统云镜像系统盘是8~9g xfs，而我们的目标是能在5g硬盘上运行，因此改成复制系统文件
-                install_qcow_by_copy
-                ;;
-            ubuntu)
-                # 24.04 云镜像有 boot 分区（在系统分区之前），因此不直接 dd 云镜像
-                install_qcow_by_copy
-                ;;
-            *)
-                # debian fedora opensuse arch gentoo any
-                dd_qcow
-                resize_after_install_cloud_image
-                modify_os_on_disk linux
-                ;;
+        if is_use_cloud_image; then
+            case "$img_type" in
+                qemu)
+                    create_part
+                    download_qcow
+                    case "$distro" in
+                        centos | almalinux | rocky | oracle | redhat | anolis | opencloudos | openeuler)
+                            # 这几个系统云镜像系统盘是8~9g xfs，而我们的目标是能在5g硬盘上运行，因此改成复制系统文件
+                            install_qcow_by_copy
+                            ;;
+                        ubuntu)
+                            # 24.04 云镜像有 boot 分区（在系统分区之前），因此不直接 dd 云镜像
+                            install_qcow_by_copy
+                            ;;
+                        *)
+                            # debian fedora opensuse arch gentoo any
+                            dd_qcow
+                            resize_after_install_cloud_image
+                            modify_os_on_disk linux
+                            ;;
+                    esac
+                    ;;
+                raw)
+                    # 暂时没用到 raw 格式的云镜像
+                    dd_raw_with_extract
+                    resize_after_install_cloud_image
+                    modify_os_on_disk linux
+                    ;;
             esac
-            ;;
-        raw)
-            # 暂时没用到 raw 格式的云镜像
-            dd_raw_with_extract
-            resize_after_install_cloud_image
-            modify_os_on_disk linux
-            ;;
-        esac
-    elif [ "$distro" = "dd" ]; then
-        case "$img_type" in
-        raw)
-            dd_raw_with_extract
-            if false; then
-                # linux 扩容后无法轻易缩小，例如 xfs
-                # windows 扩容在 windows 下完成
-                resize_after_install_cloud_image
-            fi
-            modify_os_on_disk windows
-            ;;
-        qemu) # dd qemu 不可能到这里，因为上面已处理
-            ;;
-        esac
-    else
-        # 安装模式
-        case "$distro" in
-        alpine)
-            install_alpine
-            ;;
-        arch | gentoo | aosc)
-            create_part
-            install_arch_gentoo_aosc
-            ;;
-        nixos)
-            create_part
-            install_nixos
-            ;;
-        fnos)
-            create_part
-            install_fnos
-            ;;
-        *)
-            create_part
-            mount_part_for_iso_installer
-            case "$distro" in
-            centos | almalinux | rocky | fedora | ubuntu | redhat) install_redhat_ubuntu ;;
-            windows) install_windows ;;
+        elif [ "$distro" = "dd" ]; then
+            case "$img_type" in
+                raw)
+                    dd_raw_with_extract
+                    if false; then
+                        # linux 扩容后无法轻易缩小，例如 xfs
+                        # windows 扩容在 windows 下完成
+                        resize_after_install_cloud_image
+                    fi
+                    modify_os_on_disk windows
+                    ;;
+                qemu) # dd qemu 不可能到这里，因为上面已处理
+                    ;;
             esac
-            ;;
-        esac
-    fi
+        else
+            # 安装模式
+            case "$distro" in
+                alpine)
+                    install_alpine
+                    ;;
+                arch | gentoo | aosc)
+                    create_part
+                    install_arch_gentoo_aosc
+                    ;;
+                nixos)
+                    create_part
+                    install_nixos
+                    ;;
+                fnos)
+                    create_part
+                    install_fnos
+                    ;;
+                *)
+                    create_part
+                    mount_part_for_iso_installer
+                    case "$distro" in
+                        centos | almalinux | rocky | fedora | ubuntu | redhat) install_redhat_ubuntu ;;
+                        windows) install_windows ;;
+                    esac
+                    ;;
+            esac
+        fi
 
-    # 需要用到 lsblk efibootmgr ，只要 1M 左右容量
-    # 因此 alpine 不单独处理
-    if is_efi; then
-        del_invalid_efi_entry
-        add_default_efi_to_nvram
-    fi
+        # 需要用到 lsblk efibootmgr ，只要 1M 左右容量
+        # 因此 alpine 不单独处理
+        if is_efi; then
+            del_invalid_efi_entry
+            add_default_efi_to_nvram
+        fi
 
-    info 'done'
-    # 让 web 输出全部内容
-    sleep 5
-} > /dev/null 2>&1
-
+        info 'done'
+        # 让 web 输出全部内容
+        sleep 5
+    } > /dev/null 2>&1 
+}
 # 脚本入口
 # debian initrd 会寻找 main
 # 并调用本文件的 create_ifupdown_config 方法
