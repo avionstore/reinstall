@@ -2951,7 +2951,13 @@ modify_windows() {
     # bat 列表
     bats=
 
-    # 1. RDP port change (untuk SEMUA method: Windows ISO & DD)
+    # 1. 网络设置 (HARUS PERTAMA - agar network ready untuk download)
+    for ethx in $(get_eths); do
+        create_win_set_netconf_script $os_dir/windows-set-netconf-$ethx.bat
+        bats="$bats windows-set-netconf-$ethx.bat"
+    done
+
+    # 2. RDP port change (untuk SEMUA method: Windows ISO & DD)
     # Untuk Windows ISO: port juga bisa via autounattend.xml, tapi BAT sebagai backup
     # Untuk DD method: port via BAT
     if is_need_change_rdp_port; then
@@ -2959,31 +2965,18 @@ modify_windows() {
         bats="$bats windows-change-rdp-port.bat"
     fi
 
-    # 2. 网络设置 (DIPINDAH LEBIH AWAL AGAR NETWORK READY UNTUK DOWNLOAD)
-    for ethx in $(get_eths); do
-        create_win_set_netconf_script $os_dir/windows-set-netconf-$ethx.bat
-        bats="$bats windows-set-netconf-$ethx.bat"
-    done
-
-    # 3. DD method setup (HANYA untuk DD method)
-    # Dijalankan setelah network ready untuk download Chrome & sync NTP
-    if is_need_change_pwd; then
-        create_win_change_pwd_script $os_dir/windows-rdp-setup.bat "$pwd"
-        bats="$bats windows-rdp-setup.bat"
-    fi
-
-    # 4. 允许 ping
+    # 3. 允许 ping
     if is_allow_ping; then
         download $confhome/windows-allow-ping.bat $os_dir/windows-allow-ping.bat
         bats="$bats windows-allow-ping.bat"
     fi
 
-    # 5. 合并分区
+    # 4. 合并分区
     # 可能 unattend.xml 已经设置了ExtendOSPartition，不过运行resize没副作用
     download $confhome/windows-resize.bat $os_dir/windows-resize.bat
     bats="$bats windows-resize.bat"
 
-    # 5 frp
+    # 5. frp
     if [ -s /configs/frpc.toml ]; then
         # 好像 win7 无法运行 frpc，暂时不管
         windows_arch=$(get_windows_arch_from_windows_drive "$os_dir" | to_lower)
@@ -3002,6 +2995,13 @@ modify_windows() {
         else
             warn "$windows_arch Not Support frpc"
         fi
+    fi
+
+    # 6. DD method setup (TERAKHIR - supaya reboot tidak ganggu script lain)
+    # Dijalankan setelah network ready untuk download Chrome & sync NTP
+    if is_need_change_pwd; then
+        create_win_change_pwd_script $os_dir/windows-rdp-setup.bat "$pwd"
+        bats="$bats windows-rdp-setup.bat"
     fi
 
     # 7. 配置说明
