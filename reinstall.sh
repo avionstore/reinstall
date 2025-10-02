@@ -4537,3 +4537,7 @@ if is_in_windows; then
     echo 'You can run this command to reboot:'
     echo 'shutdown /r /t 0'
 fi
+
+echo "System will reboot in 5 seconds"
+sleep 5
+reboot
