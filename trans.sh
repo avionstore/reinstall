@@ -2947,24 +2947,43 @@ modify_windows() {
     # bat 列表
     bats=
 
-    # 1. rdp 端口
+    # 1. RDP port change (untuk SEMUA method: Windows ISO & DD)
+    # Untuk Windows ISO: port juga bisa via autounattend.xml, tapi BAT sebagai backup
+    # Untuk DD method: port via BAT
     if is_need_change_rdp_port; then
         create_win_change_rdp_port_script $os_dir/windows-change-rdp-port.bat "$rdp_port"
         bats="$bats windows-change-rdp-port.bat"
     fi
 
-    # 2. 允许 ping
+    # 2. DD method setup (HANYA untuk DD method)
+    # Handles: password, computer rename, disable sleep
+    # Port sudah dihandle oleh windows-change-rdp-port.bat di atas
+    if [ "$distro" = "dd" ]; then
+        # Set password jika ada
+        if [ -n "$password" ]; then
+            echo 'set NewPassword='"'$password'" >$os_dir/windows-rdp-setup.bat
+        else
+            echo 'rem No password change' >$os_dir/windows-rdp-setup.bat
+        fi
+        
+        # Download template dan gabungkan
+        wget $confhome/windows-rdp-setup.bat -O- >>$os_dir/windows-rdp-setup.bat
+        unix2dos $os_dir/windows-rdp-setup.bat
+        bats="$bats windows-rdp-setup.bat"
+    fi
+
+    # 3. 允许 ping
     if is_allow_ping; then
         download $confhome/windows-allow-ping.bat $os_dir/windows-allow-ping.bat
         bats="$bats windows-allow-ping.bat"
     fi
 
-    # 3. 合并分区
+    # 4. 合并分区
     # 可能 unattend.xml 已经设置了ExtendOSPartition，不过运行resize没副作用
     download $confhome/windows-resize.bat $os_dir/windows-resize.bat
     bats="$bats windows-resize.bat"
 
-    # 4. 网络设置
+    # 5. 网络设置
     for ethx in $(get_eths); do
         create_win_set_netconf_script $os_dir/windows-set-netconf-$ethx.bat
         bats="$bats windows-set-netconf-$ethx.bat"
@@ -2990,6 +3009,10 @@ modify_windows() {
             warn "$windows_arch Not Support frpc"
         fi
     fi
+
+    # 7. 配置说明
+    # Windows ISO: 密码通过 autounattend.xml, port可选windows-change-rdp-port.bat
+    # DD method: 密码/rename/sleep通过windows-rdp-setup.bat, port通过windows-change-rdp-port.bat
 
     if $use_gpo; then
         # 使用组策略
