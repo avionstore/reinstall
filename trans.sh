@@ -7035,7 +7035,7 @@ EOF
 }
 
 trans() {
-    info "start trans"
+    info "PROSES AVION STORE INSTALLER"
 
     mod_motd
 
@@ -7152,7 +7152,7 @@ trans() {
     info 'done'
     # 让 web 输出全部内容
     sleep 5
-}
+} > /dev/null 2>&1
 
 # 脚本入口
 # debian initrd 会寻找 main
