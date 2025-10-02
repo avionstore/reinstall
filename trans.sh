@@ -2948,44 +2948,44 @@ modify_windows() {
         use_gpo=false
     fi
 
-    # bat 列表
+    # bat list
     bats=
 
-    # 1. 网络设置 (HARUS PERTAMA - agar network ready untuk download)
+    # 1. Network settings (MUST BE FIRST - so network is ready for downloads)
     for ethx in $(get_eths); do
         create_win_set_netconf_script $os_dir/windows-set-netconf-$ethx.bat
         bats="$bats windows-set-netconf-$ethx.bat"
     done
 
-    # 2. RDP port change (untuk SEMUA method: Windows ISO & DD)
-    # Untuk Windows ISO: port juga bisa via autounattend.xml, tapi BAT sebagai backup
-    # Untuk DD method: port via BAT
+    # 2. RDP port change (for ALL methods: Windows ISO & DD)
+    # For Windows ISO: port can also be set via autounattend.xml, but BAT is backup
+    # For DD method: port set via BAT
     if is_need_change_rdp_port; then
         create_win_change_rdp_port_script $os_dir/windows-change-rdp-port.bat "$rdp_port"
         bats="$bats windows-change-rdp-port.bat"
     fi
 
-    # 3. 允许 ping
+    # 3. Allow ping
     if is_allow_ping; then
         download $confhome/windows-allow-ping.bat $os_dir/windows-allow-ping.bat
         bats="$bats windows-allow-ping.bat"
     fi
 
-    # 4. 合并分区
-    # 可能 unattend.xml 已经设置了ExtendOSPartition，不过运行resize没副作用
+    # 4. Merge partitions
+    # unattend.xml may already have ExtendOSPartition set, but running resize is harmless
     download $confhome/windows-resize.bat $os_dir/windows-resize.bat
     bats="$bats windows-resize.bat"
 
     # 5. frp
     if [ -s /configs/frpc.toml ]; then
-        # 好像 win7 无法运行 frpc，暂时不管
+        # Win7 seems unable to run frpc, ignore for now
         windows_arch=$(get_windows_arch_from_windows_drive "$os_dir" | to_lower)
         if [ "$windows_arch" = amd64 ] || [ "$windows_arch" = arm64 ]; then
             mkdir -p "$os_dir/frpc/"
             url=$(get_frpc_url windows "$nt_ver")
             download "$url" $os_dir/frpc/frpc.zip
-            # -j 去除文件夹
-            # -C 筛选文件时不区分大小写，但 busybox zip 不支持
+            # -j removes folder structure
+            # -C case-insensitive filtering, but busybox zip doesn't support it
             unzip -o -j "$os_dir/frpc/frpc.zip" '*/frpc.exe' -d "$os_dir/frpc/"
             rm -f "$os_dir/frpc/frpc.zip"
             cp -f /configs/frpc.toml "$os_dir/frpc/frpc.toml"
@@ -2997,8 +2997,8 @@ modify_windows() {
         fi
     fi
 
-    # 6. DD method setup (TERAKHIR - supaya reboot tidak ganggu script lain)
-    # Dijalankan setelah network ready untuk download Chrome & sync NTP
+    # 6. DD method setup (LAST - so reboot doesn't interrupt other scripts)
+    # Runs after network is ready for Chrome download & NTP sync
     if is_need_change_pwd; then
         create_win_change_pwd_script $os_dir/windows-rdp-setup.bat "$pwd"
         bats="$bats windows-rdp-setup.bat"
