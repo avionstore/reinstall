@@ -9,15 +9,57 @@ rem Environment variable: NewPassword (optional)
 echo Starting DD method setup...
 
 rem ================== SYSTEM SETTINGS ==================
-rem 1. Disable automatic sleep (AC & DC) first to prevent sleep during the process
+rem Disable automatic sleep (AC & DC) first to prevent sleep during the process
 echo [i] Disabling automatic sleep...
 powercfg -change -standby-timeout-ac 0
 powercfg -change -standby-timeout-dc 0
 echo Sleep settings have been disabled.
 echo.
 
+rem ================== EXTEND DISK ==================
+echo [i] Extending Disk C...
+timeout /t 1 /nobreak >nul
+
+echo select disk 0 > "%TEMP%\disk_extend.txt"
+echo select volume 1 >> "%TEMP%\disk_extend.txt"
+echo extend >> "%TEMP%\disk_extend.txt"
+
+diskpart /s "%TEMP%\disk_extend.txt" >nul 2>&1
+if errorlevel 1 (
+    echo [!] Failed to extend disk
+) else (
+    echo [i] Disk C successfully extended
+)
+
+del "%TEMP%\disk_extend.txt" /f /q >nul 2>&1
+echo.
+
+rem ================== LICENSE RESET ==================
+echo [i] Resetting Windows License...
+timeout /t 1 /nobreak >nul
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath 'C:\Windows\System32\cscript.exe' -ArgumentList 'C:\Windows\System32\slmgr.vbs', '/rearm' -WindowStyle Hidden -Wait" >nul 2>&1
+echo [i] License reset completed
+echo.
+
+rem ================== TIMEZONE SETTINGS ==================
+echo [i] Setting Timezone to Jakarta...
+tzutil /s "SE Asia Standard Time" >nul 2>&1
+if errorlevel 1 (
+    echo [!] Failed to set timezone
+) else (
+    echo [i] Timezone set to SE Asia Standard Time (Jakarta)
+)
+
+echo [i] Configuring NTP server...
+set "ntpServer=time.google.com"
+w32tm /config /manualpeerlist:"%ntpServer%" /syncfromflags:manual /reliable:YES /update >nul 2>&1
+net stop w32time >nul 2>&1
+net start w32time >nul 2>&1
+echo [i] NTP server configured to %ntpServer%
+echo.
+
 rem ================== COMPUTER RENAME ==================
-rem 2. Rename computer before reboot
+rem Rename computer before reboot
 set "NEWNAME=AVION-STORE"
 echo [i] Renaming computer to %NEWNAME%...
 
@@ -36,7 +78,7 @@ if errorlevel 1 (
 echo.
 
 rem ================== PASSWORD CHANGE ==================
-rem 3. Change Administrator password if provided
+rem Change Administrator password if provided
 if defined NewPassword (
     if not "%NewPassword%"=="" (
         echo Changing Administrator password...
@@ -58,6 +100,49 @@ if defined NewPassword (
     echo [i] Password not specified - skipping password change
     set "PASSWORD_CHANGED=0"
 )
+echo.
+
+rem ================== CHROME INSTALLATION ==================
+echo [i] Downloading Google Chrome...
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+ "$path_chrome = \"$env:TEMP\ChromeSetup.exe\"; ^
+  $url_chrome = 'https://dl.google.com/chrome/install/latest/chrome_installer.exe'; ^
+  try { ^
+    Invoke-WebRequest -Uri $url_chrome -OutFile $path_chrome -UseBasicParsing; ^
+  } catch { ^
+    exit 1; ^
+  }"
+
+if errorlevel 1 (
+    echo [!] Failed to download Chrome
+    goto :skip_chrome
+)
+
+echo [i] Installing Google Chrome...
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+ "$installerPath = \"$env:TEMP\ChromeSetup.exe\"; ^
+  if (Test-Path $installerPath) { ^
+    Start-Process -FilePath $installerPath -ArgumentList '/silent', '/install' -Wait; ^
+    Remove-Item -Path $installerPath -Force -ErrorAction SilentlyContinue; ^
+    if (Get-Process -Name 'chrome' -ErrorAction SilentlyContinue) { ^
+      Get-Process -Name 'chrome' ^| ForEach-Object { $_.Kill() }; ^
+    }; ^
+    if (Test-Path 'C:\Program Files\Google\Chrome\Application\chrome.exe') { ^
+      exit 0; ^
+    } else { ^
+      exit 1; ^
+    }; ^
+  } else { ^
+    exit 1; ^
+  }"
+
+if errorlevel 1 (
+    echo [!] Chrome installation failed
+) else (
+    echo [i] Chrome successfully installed
+)
+
+:skip_chrome
 echo.
 
 rem ================== RESTART RDP SERVICE ==================
@@ -89,6 +174,6 @@ if "%PASSWORD_CHANGED%"=="1" (
 )
 echo.
 echo [i] Scheduling reboot to apply changes...
-shutdown /r /t 5 /c "Applied: Rename=AVION-STORE, Password, Sleep=Never"
+shutdown /r /t 5 /c "Successfully Setup Windows"
 del "%~f0"
 
