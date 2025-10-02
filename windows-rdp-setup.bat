@@ -2,85 +2,75 @@
 mode con cp select=437 >nul
 
 rem ================== DD METHOD SETUP ==================
-rem Handles password change, computer rename, and system configuration
-rem This script is ONLY for DD method installations
-rem Environment variables: NewPassword (optional)
+rem This script is only for DD installation method
+rem Handles: computer renaming, system settings, and password change (if provided)
+rem Environment variable: NewPassword (optional)
 
 echo Starting DD method setup...
 
-rem ================== PASSWORD CHANGE ==================
-rem Change Administrator password if provided
-rem NewPassword is optional - only set for DD installations
-if not defined NewPassword (
-    echo [i] Password not specified - skipping password change
-    echo [i] Password will be managed by autounattend.xml or remain unchanged
-    goto :skip_password_change
-)
-
-if "%NewPassword%"=="" (
-    echo [i] Password variable is empty - skipping password change
-    goto :skip_password_change
-)
-
-echo Changing Administrator password...
-net user Administrator "%NewPassword%"
-if errorlevel 1 (
-    echo [!] Failed to change Administrator password
-) else (
-    echo [i] Administrator password changed successfully
-)
-
-rem Disable account lockout policy
-net accounts /lockoutthreshold:0
-echo [i] Account lockout policy disabled
-
-:skip_password_change
-
+rem ================== SYSTEM SETTINGS ==================
+rem 1. Disable automatic sleep (AC & DC) first to prevent sleep during the process
+echo [i] Disabling automatic sleep...
+powercfg -change -standby-timeout-ac 0
+powercfg -change -standby-timeout-dc 0
+echo Sleep settings have been disabled.
 echo.
 
 rem ================== COMPUTER RENAME ==================
-rem Rename computer to AVION STORE
+rem 2. Rename computer before reboot
 set "NEWNAME=AVION-STORE"
 echo [i] Renaming computer to %NEWNAME%...
 
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
  "try { Rename-Computer -NewName '%NEWNAME%' -Force -ErrorAction Stop | Out-Null; exit 0 } catch { exit 1 }"
 if errorlevel 1 (
-  echo [!] PowerShell rename failed, trying WMIC fallback...
-  wmic computersystem where name="%COMPUTERNAME%" call rename "%NEWNAME%" >nul 2>&1
+    echo [!] Failed to rename computer with PowerShell, trying WMIC fallback...
+    wmic computersystem where name="%COMPUTERNAME%" call rename "%NEWNAME%" >nul 2>&1
 )
 
 if errorlevel 1 (
-    echo [!] Computer rename failed
+    echo [!] Failed to rename computer
 ) else (
-    echo [i] Computer renamed successfully to %NEWNAME%
+    echo [i] Computer name successfully changed to %NEWNAME%
 )
-
 echo.
 
-rem ================== SYSTEM SETTINGS ==================
-rem Disable automatic sleep (AC & DC)
-echo [i] Disabling automatic Sleep...
-powercfg -change -standby-timeout-ac 0
-powercfg -change -standby-timeout-dc 0
-
-echo.
-echo Sleep settings disabled.
+rem ================== PASSWORD CHANGE ==================
+rem 3. Change Administrator password if provided
+if defined NewPassword (
+    if not "%NewPassword%"=="" (
+        echo Changing Administrator password...
+        net user Administrator "%NewPassword%"
+        if errorlevel 1 (
+            echo [!] Failed to change Administrator password
+        ) else (
+            echo [i] Administrator password changed successfully
+        )
+        rem Disable account lockout policy
+        net accounts /lockoutthreshold:0
+        echo [i] Account lockout policy disabled
+        set "PASSWORD_CHANGED=1"
+    ) else (
+        echo [i] Password variable is empty - skipping password change
+        set "PASSWORD_CHANGED=0"
+    )
+) else (
+    echo [i] Password not specified - skipping password change
+    set "PASSWORD_CHANGED=0"
+)
 echo.
 
 :script_complete
 echo.
-echo ================== SETUP COMPLETED ==================
-echo [i] DD method setup script execution completed
+echo ================== SETUP COMPLETE ==================
+echo [i] DD method setup script execution finished
 echo Computer Name: %NEWNAME%
-if defined NewPassword (
+if "%PASSWORD_CHANGED%"=="1" (
     echo Password: Changed
 ) else (
     echo Password: Not changed
 )
 echo.
-echo [i] System will reboot in 10 seconds to apply all changes...
-echo [i] Press Ctrl+C to cancel reboot
-timeout /t 10
+echo [i] System will reboot in 5 seconds to apply all changes...
 del "%~f0"
 shutdown /r /t 5 /c "Applying DD setup: Computer rename, system configuration" /f
