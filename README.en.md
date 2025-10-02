@@ -239,7 +239,7 @@ bash reinstall.sh dd --img "https://example.com/xxx.xz"
 
 #### Optional Parameters
 
--   `--password PASSWORD` Set password (for DD Windows)
+-   `--pwd PASSWORD` Set DD Windows password (DD Windows only, passed via cmdline)
 -   `--allow-ping` Configure Windows Firewall to Allow Ping Responses (DD Windows only)
 -   `--rdp-port PORT` Change RDP port, default is 3389 (DD Windows only)
 -   `--ssh-port PORT` Change SSH port (for log observation during installation)

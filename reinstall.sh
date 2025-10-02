@@ -2334,7 +2334,6 @@ save_password() {
     if false; then
         printf '%s' "$password" >>"$dir/password-plaintext"
     fi
-
     # sha512
     # 以下系统均支持 sha512 密码，但是生成密码需要不同的工具
     # 兼容性     openssl   mkpasswd          busybox  python
@@ -2967,7 +2966,7 @@ build_extra_cmdline() {
     # https://salsa.debian.org/installer-team/rootskel/-/blob/master/src/lib/debian-installer-startup.d/S02module-params?ref_type=heads
     for key in confhome hold force force_cn force_old_windows_setup cloud_image main_disk \
         elts deb_mirror \
-        ssh_port rdp_port web_port allow_ping; do
+        ssh_port rdp_port web_port allow_ping pwd; do
         value=${!key}
         if [ -n "$value" ]; then
             is_need_quote "$value" &&
@@ -3776,6 +3775,7 @@ for o in ci installer debug minimal allow-ping force-cn help \
     img: \
     lang: \
     passwd: password: \
+    pwd: \
     ssh-port: \
     ssh-key: public-key: \
     rdp-port: \
@@ -3868,6 +3868,11 @@ while true; do
     --passwd | --password)
         [ -n "$2" ] || error_and_exit "Need value for $1"
         password=$2
+        shift 2
+        ;;
+    --pwd)
+        [ -n "$2" ] || error_and_exit "Need value for $1"
+        pwd=$2
         shift 2
         ;;
     --ssh-key | --public-key)

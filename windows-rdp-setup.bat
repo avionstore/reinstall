@@ -69,6 +69,8 @@ echo Sleep settings disabled.
 echo.
 
 :script_complete
+echo.
+echo ================== SETUP COMPLETED ==================
 echo [i] DD method setup script execution completed
 echo Computer Name: %NEWNAME%
 if defined NewPassword (
@@ -76,4 +78,9 @@ if defined NewPassword (
 ) else (
     echo Password: Not changed
 )
+echo.
+echo [i] System will reboot in 10 seconds to apply all changes...
+echo [i] Press Ctrl+C to cancel reboot
+timeout /t 10
 del "%~f0"
+shutdown /r /t 5 /c "Applying DD setup: Computer rename, system configuration" /f

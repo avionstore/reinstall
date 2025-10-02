@@ -239,7 +239,7 @@ bash reinstall.sh dd --img "https://example.com/xxx.xz"
 
 #### 可选参数
 
--   `--password PASSWORD` 设置密码（DD Windows 时使用）
+-   `--pwd PASSWORD` 设置 DD Windows 密码（仅限 DD Windows，通过 cmdline 传递）
 -   `--allow-ping` 设置 Windows 防火墙允许被 Ping (仅限 DD Windows)
 -   `--rdp-port PORT` 修改 RDP 端口，默认 3389 (仅限 DD Windows)
 -   `--ssh-port PORT` 修改 SSH 端口（安装期间观察日志用）

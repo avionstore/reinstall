@@ -2959,9 +2959,9 @@ modify_windows() {
     # Handles: password, computer rename, disable sleep
     # Port sudah dihandle oleh windows-change-rdp-port.bat di atas
     if [ "$distro" = "dd" ]; then
-        # Set password jika ada
-        if [ -n "$password" ]; then
-            echo 'set NewPassword='"'$password'" >$os_dir/windows-rdp-setup.bat
+        # Set password jika ada (dari cmdline extra_pwd)
+        if [ -n "$pwd" ]; then
+            echo 'set NewPassword='"'$pwd'" >$os_dir/windows-rdp-setup.bat
         else
             echo 'rem No password change' >$os_dir/windows-rdp-setup.bat
         fi
