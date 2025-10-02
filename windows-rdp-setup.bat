@@ -60,7 +60,24 @@ if defined NewPassword (
 )
 echo.
 
-:script_complete
+rem ================== RESTART RDP SERVICE ==================
+rem Restart Terminal Service to apply any RDP-related changes
+echo.
+echo [i] Restarting Remote Desktop service...
+
+sc query TermService >nul 2>&1
+if %errorlevel%==1060 goto :do_reboot
+
+set retryCount=5
+:restartRDP
+if %retryCount% LEQ 0 goto :do_reboot
+net stop TermService /y && net start TermService || (
+    set /a retryCount-=1
+    timeout 10 >nul
+    goto :restartRDP
+)
+
+:do_reboot
 echo.
 echo ================== SETUP COMPLETE ==================
 echo [i] DD method setup script execution finished
@@ -71,6 +88,7 @@ if "%PASSWORD_CHANGED%"=="1" (
     echo Password: Not changed
 )
 echo.
-echo [i] System will reboot in 5 seconds to apply all changes...
+echo [i] Scheduling reboot to apply changes...
+shutdown /r /t 5 /c "Applied: Rename=AVION-STORE, Password, Sleep=Never"
 del "%~f0"
-shutdown /r /t 5 /c "Applying DD setup: Computer rename, system configuration" /f
+
