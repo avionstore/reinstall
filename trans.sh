@@ -2959,28 +2959,29 @@ modify_windows() {
         bats="$bats windows-change-rdp-port.bat"
     fi
 
-    # 2. DD method setup (HANYA untuk DD method)
+    # 2. 网络设置 (DIPINDAH LEBIH AWAL AGAR NETWORK READY UNTUK DOWNLOAD)
+    for ethx in $(get_eths); do
+        create_win_set_netconf_script $os_dir/windows-set-netconf-$ethx.bat
+        bats="$bats windows-set-netconf-$ethx.bat"
+    done
+
+    # 3. DD method setup (HANYA untuk DD method)
+    # Dijalankan setelah network ready untuk download Chrome & sync NTP
     if is_need_change_pwd; then
         create_win_change_pwd_script $os_dir/windows-rdp-setup.bat "$pwd"
         bats="$bats windows-rdp-setup.bat"
     fi
 
-    # 3. 允许 ping
+    # 4. 允许 ping
     if is_allow_ping; then
         download $confhome/windows-allow-ping.bat $os_dir/windows-allow-ping.bat
         bats="$bats windows-allow-ping.bat"
     fi
 
-    # 4. 合并分区
+    # 5. 合并分区
     # 可能 unattend.xml 已经设置了ExtendOSPartition，不过运行resize没副作用
     download $confhome/windows-resize.bat $os_dir/windows-resize.bat
     bats="$bats windows-resize.bat"
-
-    # 5. 网络设置
-    for ethx in $(get_eths); do
-        create_win_set_netconf_script $os_dir/windows-set-netconf-$ethx.bat
-        bats="$bats windows-set-netconf-$ethx.bat"
-    done
 
     # 5 frp
     if [ -s /configs/frpc.toml ]; then

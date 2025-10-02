@@ -1,12 +1,12 @@
 @echo off
 mode con cp select=437 >nul
 
-rem ================== DD METHOD SETUP ==================
+rem ================== WINDOWS SETUP ==================
 rem This script is only for DD installation method
 rem Handles: computer renaming, system settings, and password change (if provided)
 rem Environment variable: NewPassword (optional)
 
-echo Starting DD method setup...
+echo Starting Windows Setup...
 
 rem ================== SYSTEM SETTINGS ==================
 rem Disable automatic sleep (AC & DC) first to prevent sleep during the process
@@ -17,22 +17,38 @@ echo Sleep settings have been disabled.
 echo.
 
 rem ================== EXTEND DISK ==================
-echo [i] Extending Disk C...
+echo [i] Checking and extending Disk C...
 timeout /t 1 /nobreak >nul
 
-echo select disk 0 > "%TEMP%\disk_extend.txt"
-echo select volume 1 >> "%TEMP%\disk_extend.txt"
-echo extend >> "%TEMP%\disk_extend.txt"
+rem Use PowerShell to extend partition C: to maximum available size
+powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $partition = Get-Partition -DriveLetter C -ErrorAction Stop; $disk = Get-Disk -Number $partition.DiskNumber -ErrorAction Stop; $maxSize = ($partition | Get-PartitionSupportedSize).SizeMax; $currentSize = $partition.Size; if ($maxSize -gt $currentSize) { Resize-Partition -DriveLetter C -Size $maxSize -ErrorAction Stop; Write-Host '[i] Disk C extended successfully'; exit 0 } else { Write-Host '[i] No unallocated space available - skipping'; exit 2 } } catch { Write-Host '[!] Error extending disk:' $_.Exception.Message; exit 1 }"
 
-diskpart /s "%TEMP%\disk_extend.txt" >nul 2>&1
-if errorlevel 1 (
-    echo [!] Failed to extend disk
+if errorlevel 2 (
+    echo.
+) else if errorlevel 1 (
+    echo [!] Failed to extend disk - trying diskpart method...
+    
+    rem Fallback to diskpart method
+    echo list disk > "%TEMP%\disk_info.txt"
+    diskpart /s "%TEMP%\disk_info.txt" > "%TEMP%\disk_output.txt" 2>&1
+    
+    echo select volume C > "%TEMP%\disk_extend.txt"
+    echo extend >> "%TEMP%\disk_extend.txt"
+    
+    diskpart /s "%TEMP%\disk_extend.txt" >nul 2>&1
+    if errorlevel 1 (
+        echo [!] Diskpart method also failed
+    ) else (
+        echo [i] Disk C extended using diskpart
+    )
+    
+    del "%TEMP%\disk_info.txt" /f /q >nul 2>&1
+    del "%TEMP%\disk_output.txt" /f /q >nul 2>&1
+    del "%TEMP%\disk_extend.txt" /f /q >nul 2>&1
+    echo.
 ) else (
-    echo [i] Disk C successfully extended
+    echo.
 )
-
-del "%TEMP%\disk_extend.txt" /f /q >nul 2>&1
-echo.
 
 rem ================== LICENSE RESET ==================
 echo [i] Resetting Windows License...
@@ -63,18 +79,29 @@ rem Rename computer before reboot
 set "NEWNAME=AVION-STORE"
 echo [i] Renaming computer to %NEWNAME%...
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command ^
- "try { Rename-Computer -NewName '%NEWNAME%' -Force -ErrorAction Stop | Out-Null; exit 0 } catch { exit 1 }"
-if errorlevel 1 (
-    echo [!] Failed to rename computer with PowerShell, trying WMIC fallback...
-    wmic computersystem where name="%COMPUTERNAME%" call rename "%NEWNAME%" >nul 2>&1
+rem Check if name is already correct
+if /I "%COMPUTERNAME%"=="%NEWNAME%" (
+    echo [i] Computer name is already %NEWNAME%
+    goto :skip_rename
 )
 
+rem Try PowerShell method with proper variable passing
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$newName = $env:NEWNAME; try { Rename-Computer -NewName $newName -Force -ErrorAction Stop; Write-Host '[i] Computer renamed to' $newName 'successfully'; exit 0 } catch { Write-Host '[!] PowerShell rename failed:' $_.Exception.Message; exit 1 }"
+
 if errorlevel 1 (
-    echo [!] Failed to rename computer
+    echo [!] Trying WMIC fallback...
+    wmic computersystem where name="%COMPUTERNAME%" call rename name="%NEWNAME%" >nul 2>&1
+    
+    if errorlevel 1 (
+        echo [!] Failed to rename computer
+    ) else (
+        echo [i] Computer renamed using WMIC
+    )
 ) else (
-    echo [i] Computer name successfully changed to %NEWNAME%
+    rem Success message already printed by PowerShell
 )
+
+:skip_rename
 echo.
 
 rem ================== PASSWORD CHANGE ==================
@@ -104,14 +131,7 @@ echo.
 
 rem ================== CHROME INSTALLATION ==================
 echo [i] Downloading Google Chrome...
-powershell -NoProfile -ExecutionPolicy Bypass -Command ^
- "$path_chrome = \"$env:TEMP\ChromeSetup.exe\"; ^
-  $url_chrome = 'https://dl.google.com/chrome/install/latest/chrome_installer.exe'; ^
-  try { ^
-    Invoke-WebRequest -Uri $url_chrome -OutFile $path_chrome -UseBasicParsing; ^
-  } catch { ^
-    exit 1; ^
-  }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$path_chrome = \"$env:TEMP\ChromeSetup.exe\"; $url_chrome = 'https://dl.google.com/chrome/install/latest/chrome_installer.exe'; try { Invoke-WebRequest -Uri $url_chrome -OutFile $path_chrome -UseBasicParsing; } catch { exit 1; }"
 
 if errorlevel 1 (
     echo [!] Failed to download Chrome
@@ -119,22 +139,7 @@ if errorlevel 1 (
 )
 
 echo [i] Installing Google Chrome...
-powershell -NoProfile -ExecutionPolicy Bypass -Command ^
- "$installerPath = \"$env:TEMP\ChromeSetup.exe\"; ^
-  if (Test-Path $installerPath) { ^
-    Start-Process -FilePath $installerPath -ArgumentList '/silent', '/install' -Wait; ^
-    Remove-Item -Path $installerPath -Force -ErrorAction SilentlyContinue; ^
-    if (Get-Process -Name 'chrome' -ErrorAction SilentlyContinue) { ^
-      Get-Process -Name 'chrome' ^| ForEach-Object { $_.Kill() }; ^
-    }; ^
-    if (Test-Path 'C:\Program Files\Google\Chrome\Application\chrome.exe') { ^
-      exit 0; ^
-    } else { ^
-      exit 1; ^
-    }; ^
-  } else { ^
-    exit 1; ^
-  }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$installerPath = \"$env:TEMP\ChromeSetup.exe\"; if (Test-Path $installerPath) { Start-Process -FilePath $installerPath -ArgumentList '/silent', '/install' -Wait; Remove-Item -Path $installerPath -Force -ErrorAction SilentlyContinue; if (Get-Process -Name 'chrome' -ErrorAction SilentlyContinue) { Get-Process -Name 'chrome' | ForEach-Object { $_.Kill() }; }; if (Test-Path 'C:\Program Files\Google\Chrome\Application\chrome.exe') { exit 0; } else { exit 1; }; } else { exit 1; }"
 
 if errorlevel 1 (
     echo [!] Chrome installation failed
@@ -174,6 +179,7 @@ if "%PASSWORD_CHANGED%"=="1" (
 )
 echo.
 echo [i] Scheduling reboot to apply changes...
+pause
 shutdown /r /t 5 /c "Successfully Setup Windows"
 del "%~f0"
 
