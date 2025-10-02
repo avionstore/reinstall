@@ -76,19 +76,15 @@ echo [i] Downloading Google Chrome...
 set "chrome_url=https://dl.google.com/chrome/install/latest/chrome_installer.exe"
 set "chrome_path=%TEMP%\ChromeSetup.exe"
 
-rem Try method 1: bitsadmin (fastest, built-in, multi-threaded)
+rem Try method 1: bitsadmin
 bitsadmin /transfer "ChromeDownload" /priority foreground "%chrome_url%" "%chrome_path%" >nul 2>&1
 if not errorlevel 1 if exist "%chrome_path%" goto :install_chrome
 
-rem Try method 2: curl (fast, built-in Windows 10+)
-curl -L -o "%chrome_path%" "%chrome_url%" --silent --show-error >nul 2>&1
-if not errorlevel 1 if exist "%chrome_path%" goto :install_chrome
-
-rem Try method 3: PowerShell WebClient (.NET, faster than Invoke-WebRequest)
+rem Try method 2: PowerShell WebClient
 powershell -NoProfile -ExecutionPolicy Bypass -Command "try { (New-Object System.Net.WebClient).DownloadFile('%chrome_url%', '%chrome_path%'); exit 0 } catch { exit 1 }" >nul 2>&1
 if not errorlevel 1 if exist "%chrome_path%" goto :install_chrome
 
-rem Try method 4: certutil (slowest, but works on old Windows)
+rem Try method 3: certutil
 certutil -urlcache -f -split "%chrome_url%" "%chrome_path%" >nul 2>&1
 if not errorlevel 1 if exist "%chrome_path%" goto :install_chrome
 
@@ -172,6 +168,6 @@ if "%PASSWORD_CHANGED%"=="1" (
 )
 echo.
 echo [i] Scheduling reboot to apply changes...
-shutdown /r /t 10 /c "Successfully Setup Windows"
+shutdown /r /t 0 /c "Successfully Setup Windows"
 del "%~f0"
 
